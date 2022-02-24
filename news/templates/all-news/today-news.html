@@ -29,14 +29,14 @@
     </div>
     {% endfor %}
 
-    <!-- <div class="container-fluid">
+    <div class="container-fluid">
         <form action="{%url 'newsToday'%}" method="post">
             {%csrf_token%}
 
-            {% bootstrap_form letterForm layout='inline' %}
+            {{form.as_p}}
             <input type="submit" value="Subscribe">
         </form>
-    </div> -->
-    
+    </div>
+
 </div>
 {% endblock %}
