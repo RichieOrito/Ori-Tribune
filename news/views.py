@@ -3,6 +3,7 @@ from django.http import HttpResponse,Http404,HttpResponseRedirect
 from .models import Article, NewsLetterRecipients
 import datetime as dt
 from .forms import NewsLetterForm
+from .email import send_welcome_email
 # We first import the HttpResponse class from the django.http modeule.This will be responsible  for returning a response to a user.
 
 # Views
@@ -21,12 +22,15 @@ def news_today(request):
         if form.is_valid():
             name = form.cleaned_data['your_name']
             email = form.cleaned_data['email']
+
             recipient = NewsLetterRecipients(name = name , email=email)
             recipient.save()
+            send_welcome_email(name,email)
+
             HttpResponseRedirect('news_today')
     else:
         form = NewsLetterForm()
-    return render(request, 'all-news/today-news.html', {"date": date,"news":news})
+    return render(request, 'all-news/today-news.html', {"date": date,"news":news,"letterForm":form})
 
 def past_days_news(request,past_date):
 
