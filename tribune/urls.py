@@ -23,6 +23,6 @@ urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'',include('news.urls')),
     re_path(r'^accounts/', include('registration.backends.simple.urls')),
-    re_path( r'^logout/$',auth_views.LogoutView.as_view()),
+    re_path( r'^logout/$',auth_views.LogoutView.as_view(template_name='registration/logout.html'),name='logout'),
     re_path(r'^tinymce/', include('tinymce.urls')),
 ]
