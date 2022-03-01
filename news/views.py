@@ -4,6 +4,11 @@ from .models import Article, NewsLetterRecipients
 import datetime as dt
 from .forms import NewsLetterForm
 from .email import send_welcome_email
+from django.contrib.auth.decorators import login_required
+from .forms import NewArticleForm, NewsLetterForm
+from django.http import JsonResponse
+
+
 # We first import the HttpResponse class from the django.http modeule.This will be responsible  for returning a response to a user.
 
 # Views
@@ -31,6 +36,16 @@ def news_today(request):
     else:
         form = NewsLetterForm()
     return render(request, 'all-news/today-news.html', {"date": date,"news":news,"letterForm":form})
+
+def newsletter(request):
+    name = request.POST.get('your_name')
+    email = request.POST.get('email')
+
+    recipient = NewsLetterRecipients(name=name, email=email)
+    recipient.save()
+    send_welcome_email(name, email)
+    data = {'success': 'You have been successfully added to mailing list'}
+    return JsonResponse(data)
 
 def past_days_news(request,past_date):
 
@@ -61,10 +76,26 @@ def search_results(request):
     else:
         message = "You haven't searched for any term"
         return render(request, 'all-news/search.html',{"message":message})
-
+        
+@login_required(login_url='/accounts/login/')
 def article(request,article_id):
     try:
         article = Article.objects.get(id = article_id)
     except DoesNotExist:
         raise Http404()
     return render(request,"all-news/article.html", {"article":article})
+
+@login_required(login_url='/accounts/login/')
+def new_article(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = NewArticleForm(request.POST, request.FILES)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.editor = current_user
+            article.save()
+        return redirect('NewsToday')
+
+    else:
+        form = NewArticleForm()
+    return render(request, 'new_article.html', {"form": form})

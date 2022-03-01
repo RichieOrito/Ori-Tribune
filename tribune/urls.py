@@ -16,9 +16,13 @@ Including another URLconf
 from django.urls import re_path, include
 # The include function allows us to reference another URLconf.
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'',include('news.urls')),
     re_path(r'^accounts/', include('registration.backends.simple.urls')),
+    re_path( r'^logout/$',auth_views.LogoutView.as_view()),
+    re_path(r'^tinymce/', include('tinymce.urls')),
 ]
