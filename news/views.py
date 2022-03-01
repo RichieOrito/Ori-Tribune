@@ -94,8 +94,7 @@ def new_article(request):
             article = form.save(commit=False)
             article.editor = current_user
             article.save()
-        return redirect('NewsToday')
-
+        return redirect('newsToday')
     else:
         form = NewArticleForm()
     return render(request, 'new_article.html', {"form": form})
